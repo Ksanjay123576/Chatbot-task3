@@ -1,0 +1,54 @@
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import wordnet
+from nltk.stem import WordNetLemmatizer
+import random
+
+# Preprocess user input
+def preprocess(text):
+    lemmatizer = WordNetLemmatizer()
+    tokens = word_tokenize(text.lower())  # Tokenize and convert to lowercase
+    lemmatized = [lemmatizer.lemmatize(word) for word in tokens]
+    return lemmatized
+
+# Define a simple rule-based response function
+def get_response(user_input):
+    responses = {
+        "greeting": ["Hello!", "Hi there!", "Hey!", "Hi! How can I help you?"],
+        "weather": ["I'm not a weather bot, but I can help you find weather APIs!"],
+        "name": ["I'm your friendly chatbot!", "I don't have a name yet, but you can give me one!"],
+        "default": ["I'm sorry, I didn't understand that.", "Can you please rephrase?"],
+    }
+    
+    # Define keywords for each intent
+    keywords = {
+        "greeting": ["hello", "hi", "hey", "greetings"],
+        "weather": ["weather", "forecast", "temperature"],
+        "name": ["your name", "who are you"],
+    }
+
+    # Preprocess user input
+    tokens = preprocess(user_input)
+
+    # Check for keywords in user input
+    for intent, words in keywords.items():
+        if any(word in tokens for word in words):
+            return random.choice(responses[intent])
+
+    # Default response
+    return random.choice(responses["default"])
+
+# Chat loop
+def chatbot():
+    print("Chatbot: Hello! I'm here to assist you. Type 'exit' to end the chat.")
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() in ["exit", "quit"]:
+            print("Chatbot: Goodbye! Have a great day!")
+            break
+        response = get_response(user_input)
+        print(f"Chatbot: {response}")
+
+# Run the chatbot
+if __name__ == "__main__":
+    chatbot()
